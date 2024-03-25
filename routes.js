@@ -119,10 +119,11 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
         const notes = req.body.notes;
 
         const reservation = new Reservation({
-            customerId,
             startAt,
             notes,
         });
+        // set private properties
+        reservation.customerId = customerId;
         reservation.numGuests = numGuests;
         await reservation.save();
 

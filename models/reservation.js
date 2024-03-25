@@ -7,9 +7,9 @@ const db = require("../db");
 /** A reservation for a party */
 
 class Reservation {
-    constructor({ id, customerId, startAt, notes }) {
+    constructor({ id, startAt, notes }) {
         this.id = id;
-        this.customerId = customerId;
+        this._customerId = undefined;
         this._numGuests = undefined;
         this.startAt = startAt;
         this.notes = notes;
@@ -27,6 +27,21 @@ class Reservation {
             this._numGuests = value;
         } else {
             throw new Error("Number of guests on reservation must be a positive number.");
+        }
+    }
+
+    /** getter and setter for customerID */
+
+    get customerId() {
+        return this._customerId;
+    }
+
+    set customerId(id) {
+        // Only allow setting a customer id if one hasn't been assigned yet.
+        if (!this._customerId) {
+            this._customerId = id;
+        } else {
+            throw new Error("Unable to move reservation to new customer.");
         }
     }
 
@@ -52,6 +67,7 @@ class Reservation {
 
         return results.rows.map(function (row) {
             const reservation = new Reservation(row);
+            reservation.customerId = row.customerId;
             reservation.numGuests = row.numGuests;
             return reservation;
         });
