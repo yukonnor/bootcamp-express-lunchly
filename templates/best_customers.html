@@ -5,7 +5,7 @@
 <ul style="column-count: 1">
     {% for customer in bestCustomers %}
     <li>
-        <a href="/{{ customer.id }}/">{{ customer.firstName }} {{ customer.lastName }}</a> |
+        <a href="/{{ customer.id }}/">{{ customer.fullName }}</a> |
         <b>{{ customer.resCount }}</b> reservations
     </li>
     {% endfor %}

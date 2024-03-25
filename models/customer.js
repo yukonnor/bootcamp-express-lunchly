@@ -11,8 +11,29 @@ class Customer {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
-        this.notes = notes;
+        this._notes = notes;
         this.resCount = undefined;
+    }
+
+    /** getter and setter for customer notes */
+
+    get notes() {
+        return this._notes;
+    }
+
+    set notes(value) {
+        // Perform validation or side effects if needed
+        if (!value) {
+            this._notes = "";
+        } else {
+            this._notes = `${value}`;
+        }
+    }
+
+    /** getter for full name of the customer */
+
+    get fullName() {
+        return this.firstName + " " + this.lastName;
     }
 
     /** find all customers. */
@@ -129,12 +150,6 @@ class Customer {
                 [this.firstName, this.lastName, this.phone, this.notes, this.id]
             );
         }
-    }
-
-    /** return the full name of the customer */
-
-    fullName() {
-        return this.firstName + " " + this.lastName;
     }
 }
 
