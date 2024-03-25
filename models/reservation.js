@@ -7,12 +7,27 @@ const db = require("../db");
 /** A reservation for a party */
 
 class Reservation {
-    constructor({ id, customerId, numGuests, startAt, notes }) {
+    constructor({ id, customerId, startAt, notes }) {
         this.id = id;
         this.customerId = customerId;
-        this.numGuests = numGuests;
+        this._numGuests = undefined;
         this.startAt = startAt;
         this.notes = notes;
+    }
+
+    /** getter and setter for numGuests */
+
+    get numGuests() {
+        return this._numGuests;
+    }
+
+    set numGuests(value) {
+        // Perform validation or side effects if needed
+        if (Number.isInteger(value) && value > 0) {
+            this._numGuests = value;
+        } else {
+            throw new Error("Number of guests on reservation must be a positive number.");
+        }
     }
 
     /** formatter for startAt */
@@ -35,7 +50,11 @@ class Reservation {
             [customerId]
         );
 
-        return results.rows.map((row) => new Reservation(row));
+        return results.rows.map(function (row) {
+            const reservation = new Reservation(row);
+            reservation.numGuests = row.numGuests;
+            return reservation;
+        });
     }
 
     /** save (or create) this reservation. */
