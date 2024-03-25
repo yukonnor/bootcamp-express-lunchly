@@ -12,6 +12,7 @@ class Customer {
         this.lastName = lastName;
         this.phone = phone;
         this.notes = notes;
+        this.resCount = undefined;
     }
 
     /** find all customers. */
@@ -51,6 +52,37 @@ class Customer {
         }
 
         return new Customer(customer);
+    }
+
+    /** Return x customers with most reservations. */
+
+    static async bestCustomers(customerLimit = 10) {
+        const results = await db.query(
+            `SELECT c.id, 
+                  c.first_name AS "firstName",  
+                  c.last_name AS "lastName", 
+                  c.phone, 
+                  c.notes,
+                  COUNT(r.*) as "resCount"
+           FROM customers c 
+           INNER JOIN reservations r ON c.id = r.customer_id 
+           GROUP BY 1,2,3,4,5
+           ORDER BY 6 DESC 
+           LIMIT $1;`,
+            [customerLimit]
+        );
+
+        return results.rows.map(function (row) {
+            const customer = new Customer({
+                id: row.id,
+                firstName: row.firstName,
+                lastName: row.lastName,
+                phone: row.phone,
+                notes: row.notes,
+            });
+            customer.resCount = row.resCount;
+            return customer;
+        });
     }
 
     /** find customers name. */
